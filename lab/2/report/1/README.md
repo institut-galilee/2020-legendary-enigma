@@ -6,3 +6,8 @@ The software is created in the spirit of the Processing programming language and
 ## Using Fritzing to create a sketch and connect the components
  We create a sketch with components (Arduino UNO, BME280, Piezo Buzzer, ESP32 - DevKit, resistor)
 
+ ![SKETCH](sketch.png)
+ 
+ 
+ This is Schema of this Sketch
+ ![SCHEMA](schematic.png)
