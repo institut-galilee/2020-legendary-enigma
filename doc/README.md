@@ -2,7 +2,7 @@
 
 ## 1. Description de projet
 Notre projet est de développer une cloche d'alarme incendie. La cloche alerte l'utilisateur sur la presence de gaz, de fumée dans la maison.
-Après, nous avons développerons les fonctionalités d'un maison intélligent.
+Après, nous avons développer les fonctionalités d'un maison intelligent.
 
 ## 2. Function
 - Détecter le gaz et la fumée
@@ -18,9 +18,9 @@ Après, nous avons développerons les fonctionalités d'un maison intélligent.
 
 - Le client peut peut ouvrir la porte de maison et de garage
 
-- Server est de stocker les données et envoyer les informations au client.
+- un Server simple est de stocker les données, d'envoyer les informations au client et de calculer les statistiques.
 
-- Frontend est l'application mobile.
+- Frontend est l'application mobile pour l'utilisateur
 
 Usecase Diagram:
 ![Usecase Diagram](image/UC_diagram.png)
