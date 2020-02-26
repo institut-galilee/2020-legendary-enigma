@@ -1,10 +1,10 @@
-#IoT Project 2020
+# IoT Project 2020 - Legendary Enigma
 
-##1. Description de projet
+## 1. Description de projet
 Notre projet est de développer une cloche d'alarme incendie. La cloche alerte l'utilisateur sur la presence de gaz, de fumée dans la maison.
 Après, nous avons développerons les fonctionalités d'un maison intélligent.
 
-##2. Function
+## 2. Function
 - Détecter le gaz et la fumée
 
 - Mesurer la température, l'humidité, la pression
@@ -23,12 +23,12 @@ Après, nous avons développerons les fonctionalités d'un maison intélligent.
 - Frontend est l'application mobile.
 
 Usecase Diagram:
+![Usecase Diagram](doc/image/usecase diagram.png)
+
+## 3.Description des fonctionalités:
 
 
-##3.Description des fonctionalités:
-
-
-##4. Component
+## 4. Component
 - Arduino UNO R3 	: Micro Controller
 
 - MQ2 sensor 		: Gaz & Smoke sensor
@@ -53,10 +53,10 @@ Usecase Diagram:
 - Wired
 
 
-##4. Schema
+## 5. Schema
 ![Schematic](doc/image/schema.png)
 
-##5. References:
+## 6. References:
 
 [ESP32 DevKit Wifi]
 (https://techtutorialsx.com/2017/06/29/esp32-arduino-getting-started-with-wifi/)
