@@ -9,10 +9,10 @@ Après, nous avons développer les fonctionalités d'un maison intelligent.
 
 - Mesurer la température, l'humidité, la pression
 
-- Envoyer un avertissement au client lorsque du gaz est détecté, de la fumée détectée par application mobile.
+- Envoyer un avertissement au client lorsque le gaz est détecté ou la fumée est détectée.
 	+ Si Wifi n'est pas disponible, device envoiera un SMS au client
 	
-- Le client peut voir les données (température, humidité, pression) sur l'application mobile en temps réel et en un moi, un week.
+- Le client peut voir les données (température, humidité, pression) sur l'application mobile en temps réel et dans un moi, dans une semaine.
 
 - Le client peut configurer des paramètre de device (wifi & password, temps de collecter, connection de bluetooth, ...)
 
