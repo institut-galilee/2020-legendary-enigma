@@ -23,7 +23,7 @@ Après, nous avons développerons les fonctionalités d'un maison intélligent.
 - Frontend est l'application mobile.
 
 Usecase Diagram:
-![Usecase Diagram](image/usecase diagram.png)
+![Usecase Diagram](image/UC_diagram.png)
 
 ## 3.Description des fonctionalités:
 
@@ -32,7 +32,7 @@ Usecase Diagram:
 - Arduino UNO R3 	: Micro Controller
 
 - MQ2 sensor 		: Gaz & Smoke sensor
-![MQ2 Sensor](image/MQ-2 sensor.png)
+![MQ2 Sensor](image/MQ-2.png)
 
 - ESP32 Dev Kit 	: Wifi and Bluetooth device
 
@@ -40,10 +40,10 @@ Usecase Diagram:
 ![BME280](image/BME280.png)
 
 - MFRC522 			: RFID Reader
-![MFRC522 _ RFID](image/MFRC522 _ RFID.png)
+![MFRC522 _ RFID](image/MFRC522_RFID.png)
 
 - SIM800L 			: GSM Module
-![800L GSM Module](image/800L GSM Module.png)
+![800L GSM Module](image/800L_GSM_Module.png)
 
 - Expansion Board	: Extension
 
