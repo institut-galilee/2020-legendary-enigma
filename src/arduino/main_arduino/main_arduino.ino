@@ -19,7 +19,7 @@ int smokeThreshold = 400;
 // GSM initial
 GSM gsmAccess;
 GSM_SMS sms;
-boolean notConnected = true;
+boolean gsmConnected = false;
 
 //load from first login
 char* warningNumber;
@@ -30,7 +30,27 @@ void setup() {
   // Define the LED pin as Output
   Serial.begin(9600);
   setupMQ2();
-  setupGSM();
+  //setupGSM();
+}
+
+void loop() {
+  //blink led to warning smoke or gas
+  if (isWarning == true) {
+    // led & buzzer warning
+    digitalWrite(LED_WARN_PIN, HIGH);
+    tone(BUZZER_PIN, 1000, 500);
+    delay(300);
+    digitalWrite(LED_WARN_PIN, LOW);
+    delay(300);
+
+    //send SMS
+    //sendSmsWarning();
+    
+    //
+
+  }
+  delay(5000);
+  //receiveSmsEvent();
 }
 
 //setup MQ2 sensor and component
@@ -38,26 +58,25 @@ void setup() {
 void setupMQ2() {
   // MQ2 warming up
   delay(20000);
-  pinMode(LED_BUILTIN, OUTPUT);
   pinMode(LED_WARN_PIN, OUTPUT);
   pinMode(BUZZER_PIN, OUTPUT);
   pinMode(SMOKE_PIN, INPUT);
   pinMode(GAS_PIN, INPUT);
 
   // Start the I2C Bus as Slave on address 2
-  Wire.begin(2);
-  Serial.println(" Registre address 2 - OK");
-
-  // Attach a function to trigger when something is received.
-  Wire.onReceive(receiveDataEvent);
+//  Wire.begin(2);
+//  Serial.println(" Registre address 2 - OK");
+//
+//  // Attach a function to trigger when something is received.
+//  Wire.onReceive(receiveDataEvent);
 }
 
 //set up and connect GSM
 //put this function to setup()
 void setupGSM() {
-  while (notConnected) {
+  while (gsmConnected == false) {
     if (gsmAccess.begin(SIM_PINNUMBER) == GSM_READY) {
-      notConnected = false;
+      gsmConnected = true;
     } else {
       Serial.println("Connecting GSM");
       delay(1000);
@@ -71,7 +90,7 @@ void setupGSM() {
 //else return false and warning to Server
 boolean sendSmsWarning() {
   if (notConnected == false) {
-    sms.beginSMS(&warningNumber);
+    //FIX MEsms.beginSMS(&warningNumber);
     //write message's content
     sms.print(txtDefaultMsg);
     sms.print(txtMsg);
@@ -114,35 +133,16 @@ void receiveDataEvent(int manyBytes) {
     //read temp
     //tempValue = "15.5";
     //read gas
-    //gasValue = digitalRead(GAS_PIN);
+    int gasValue = digitalRead(GAS_PIN);
     //read smoke
-    //smokeValue = analogRead(SMOKE_PIN);
-    Wire.write("15.5");
-    Wire.write("200");
-    Wire.write("200");
+    int smokeValue = analogRead(SMOKE_PIN);
+//    Wire.write("15.5");
+//    Wire.write("200");
+//    Wire.write("200");
     Serial.println(tempValue + " " + gasValue + " " + smokeValue);
     if (gasValue > gasThreshold || smokeValue > smokeThreshold) {
       isWarning = true;
       Serial.println("warning warning warning");
     }
   }
-}
-
-void loop() {
-  //blink led to warning smoke or gas
-  if (isWarning == true) {
-    // led & buzzer warning
-    digitalWrite(LED_WARN_PIN, HIGH);
-    tone(BUZZER_PIN, 1000, 500);
-    delay(200);
-    digitalWrite(LED_WARN_PIN, LOW);
-    delay(200);
-
-    //send SMS
-    sendSmsWarning();
-
-    //
-
-  }
-  receiveSmsEvent();
 }
