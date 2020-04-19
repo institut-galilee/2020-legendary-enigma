@@ -3,9 +3,9 @@ import fs from 'fs';
 
 AWS.config.update({
   "region": "us-east-1",
-  "accessKeyId": "ASIA3NXQMWU7ZM5G3JZQ",
-  "secretAccessKey": "Sed0Rl4hEjO/sL5rRckVxzgdhEqTieMnGy/Ag52N",
-  "sessionToken": "FwoGZXIvYXdzEKH//////////wEaDI4RdwatSPsH6AJ8JiLNAQ4sbeRlE1uVbQnek979Gsa/iDg+UHhUHO/b5wP4Z1j3c/JmVBWra1/oe4OQ5duGCqnIRx9y/k2saIah4+E0vXWu2j6fpRQHn9AzoCNUYqaV7xAlmeg8v2OdU2Nt1mvw/fXBS84hJervuSWJv3dR61Z/JqOTeCNb6hebV8MmGY6uDFLho/FTZCoi/UgUr8uiwFrKVtcd/Z9a3NPSSlS0sZ/EbHrv1PT30NBLrOXvrOvt4CMnC+DTlgNoLtQKPy6ueoPB4xUKTsc+z2dYJykojvHh9AUyLZLtoXOvcgpcK24mi5lZlHyoJk+SvMK78tvIpS+5yjOuB/S9hiYYV0woh5RjBQ=="
+  "accessKeyId": "ASIA3NXQMWU74CZWDXK7",
+  "secretAccessKey": "Fc8Av9GEEkJoRl6Fq5Y7jFJcnHoRASxY9LSZU7/y",
+  "sessionToken": "FwoGZXIvYXdzEPH//////////wEaDF7dH1HdDq9YSKnvQSLNAeORAQswC97Yu2dg+2Ye5iKuH7s72UBVdTd3nh2K1UDtJ8XCIeUcwmpGEtICfCPOYGs2LNCWV3ip+uGuiQOmku7Jv1TY/EdBUYSLnRWksRMryQaSOh0lsxZ6ZD9shCVMvy/MIG/FchdBSWtHEkyDw0Gbvxd4kVceV+22Q1c9HtR5N7mD3uD8kC7367dBwyqm1VCxOZgr11zHlFjtojEMwzF1bI3RoPsY6actI21bPGIX4TQENl8JhJHg6DzybFHsiUNNEQa4arXy9/yQkH8o8sHz9AUyLQcOUK/tMV+O6x8roOfBCeLIqWube2BboOtkSn19uPcOIWbuSEa6d0N1TpcS/A=="
 });
 const table_sensor = "sensor_data";
 const table_device = "device";
