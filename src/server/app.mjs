@@ -1,10 +1,12 @@
 import express from 'express';
-const port = 2020;
-const app = express();
+
 import routes from './routes.mjs';
 import bodyParser from 'body-parser';
 
 
+
+const port = 3000;
+const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true,
@@ -16,3 +18,10 @@ const server = app.listen(port, (error) => {
 });
 
 routes(app);
+
+
+
+
+
+
+

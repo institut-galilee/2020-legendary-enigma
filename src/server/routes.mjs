@@ -1,4 +1,7 @@
-export default function routes(app) {
+import fa_service from "./service.mjs"
+
+
+function routes(app) {
   /* TODO: API
     Login
     Change setting - Bluetooth ?
@@ -6,10 +9,12 @@ export default function routes(app) {
     Graph
   */
   app.post('/login', (request, response) => {
-      response.send(
-          { message: 'Login successful test' }
-      );
+    fa_service.login(request, response);
   });
 
-  
-};
+  app.post('/sensor_data', (request, response) => {
+    fa_service.getSensorData(request, response);
+  });
+}
+
+export default routes;
