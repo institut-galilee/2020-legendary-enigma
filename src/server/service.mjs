@@ -1,12 +1,20 @@
 import AWS from 'aws-sdk';
 import fs from 'fs';
 
+// AWS.config.update({
+//   "region": "us-east-1",
+//   "accessKeyId": "ASIA3NXQMWU74CZWDXK7",
+//   "secretAccessKey": "Fc8Av9GEEkJoRl6Fq5Y7jFJcnHoRASxY9LSZU7/y",
+//   "sessionToken": "FwoGZXIvYXdzEPH//////////wEaDF7dH1HdDq9YSKnvQSLNAeORAQswC97Yu2dg+2Ye5iKuH7s72UBVdTd3nh2K1UDtJ8XCIeUcwmpGEtICfCPOYGs2LNCWV3ip+uGuiQOmku7Jv1TY/EdBUYSLnRWksRMryQaSOh0lsxZ6ZD9shCVMvy/MIG/FchdBSWtHEkyDw0Gbvxd4kVceV+22Q1c9HtR5N7mD3uD8kC7367dBwyqm1VCxOZgr11zHlFjtojEMwzF1bI3RoPsY6actI21bPGIX4TQENl8JhJHg6DzybFHsiUNNEQa4arXy9/yQkH8o8sHz9AUyLQcOUK/tMV+O6x8roOfBCeLIqWube2BboOtkSn19uPcOIWbuSEa6d0N1TpcS/A=="
+// });
+
 AWS.config.update({
-  "region": "us-east-1",
-  "accessKeyId": "ASIA3NXQMWU74CZWDXK7",
-  "secretAccessKey": "Fc8Av9GEEkJoRl6Fq5Y7jFJcnHoRASxY9LSZU7/y",
-  "sessionToken": "FwoGZXIvYXdzEPH//////////wEaDF7dH1HdDq9YSKnvQSLNAeORAQswC97Yu2dg+2Ye5iKuH7s72UBVdTd3nh2K1UDtJ8XCIeUcwmpGEtICfCPOYGs2LNCWV3ip+uGuiQOmku7Jv1TY/EdBUYSLnRWksRMryQaSOh0lsxZ6ZD9shCVMvy/MIG/FchdBSWtHEkyDw0Gbvxd4kVceV+22Q1c9HtR5N7mD3uD8kC7367dBwyqm1VCxOZgr11zHlFjtojEMwzF1bI3RoPsY6actI21bPGIX4TQENl8JhJHg6DzybFHsiUNNEQa4arXy9/yQkH8o8sHz9AUyLQcOUK/tMV+O6x8roOfBCeLIqWube2BboOtkSn19uPcOIWbuSEa6d0N1TpcS/A=="
+  region: "us-east-1"
 });
+let credentials = new AWS.SharedIniFileCredentials({profile: 'default'});
+
+AWS.config.credentials = credentials;
+
 const table_sensor = "sensor_data";
 const table_device = "device";
 
@@ -35,12 +43,18 @@ function login(req, res) {
       console.error(err);
       res.statusCode = 400;
       res.json({
-        message: "Device's id or password is incorrect"
+        message: err.message
       });
     } else if(data.Count == 1) {
       console.log("Login successfully: " + device_id);
       res.statusCode = 200;
-      res.json("message: " + device_id);
+      res.json({
+        message: device_id
+      });
+    } else if(data.Count == 0) {
+      res.json({
+        message: "Device's id or password is incorrect"
+      });
     }
   });
 }
