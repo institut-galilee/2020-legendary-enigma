@@ -1,148 +1,189 @@
-#include <Wire.h>
-#include <GSM.h>
+#include <SoftwareSerial.h>
 
-#define LED_BUILTIN 13
 #define LED_WARN_PIN 11
 #define BUZZER_PIN 10
 #define SMOKE_PIN A0
-#define GAS_PIN 9
+#define GAS_PIN 8
+#define TEMP_PIN A2
 #define SIM_PINNUMBER "0832"
 
-// Include the required Wire library for I2C<br>#include <Wire.h>
-float tempValue;
+#define TEMP_RESISTOR 10000
+#define THERMISTORNOMINAL 10000
+#define TEMPERATURENOMINAL 25
+#define BCOEFFICIENT 3950
+#define SERIESRESISTOR 320 //320
+
+// sensor variable
+int tempValue;
 int gasValue;
 int smokeValue;
 bool isWarning = false;
-int gasThreshold = 400;
+bool isTesting = false;
+char* testingData;
 int smokeThreshold = 400;
+float ther_resistor;
 
-// GSM initial
-GSM gsmAccess;
-GSM_SMS sms;
-boolean gsmConnected = false;
 
-//load from first login
+//Create software serial object to communicate with SIM800L
+SoftwareSerial smsSerial(3, 2); //SIM800L Tx & Rx is connected to Arduino #3 & #2
+boolean notConnected = true;
 char* warningNumber;
 char* receiveNumber;
-char* txtDefaultMsg = "FireAlarm's WARNING !!!";
-char* txtMsg = "Smoke detected in your house now";
-void setup() {
+char* agencyNumber;
+char* txtMsg = "FireAlarm's WARNING !!! Smoke is detected in your house now !!!";
+
+
+
+int convertTempC(float valuePinA2)
+{
+  valuePinA2 = 1023 / valuePinA2 - 1;
+  valuePinA2 = SERIESRESISTOR / valuePinA2;
+  valuePinA2 = valuePinA2 / THERMISTORNOMINAL;
+  valuePinA2 = log(valuePinA2);
+  valuePinA2 /= BCOEFFICIENT;
+  valuePinA2 += 1.0 / (TEMPERATURENOMINAL + 273.15);
+  valuePinA2 = 1.0 / valuePinA2;
+  valuePinA2 -= 273.15;
+  return valuePinA2;
+}
+
+void setup()
+{
   // Define the LED pin as Output
-  Serial.begin(9600);
+  Serial.begin(19200);
+  setupPin();
+  setupSIM800L();
   setupMQ2();
-  //setupGSM();
 }
 
-void loop() {
-  //blink led to warning smoke or gas
-  if (isWarning == true) {
-    // led & buzzer warning
-    digitalWrite(LED_WARN_PIN, HIGH);
-    tone(BUZZER_PIN, 1000, 500);
-    delay(300);
-    digitalWrite(LED_WARN_PIN, LOW);
-    delay(300);
-
-    //send SMS
-    //sendSmsWarning();
-    
-    //
-
-  }
-  delay(5000);
-  //receiveSmsEvent();
-}
-
-//setup MQ2 sensor and component
-//put this function in setup()
-void setupMQ2() {
-  // MQ2 warming up
-  delay(20000);
+void setupPin()
+{
   pinMode(LED_WARN_PIN, OUTPUT);
   pinMode(BUZZER_PIN, OUTPUT);
   pinMode(SMOKE_PIN, INPUT);
   pinMode(GAS_PIN, INPUT);
-
-  // Start the I2C Bus as Slave on address 2
-//  Wire.begin(2);
-//  Serial.println(" Registre address 2 - OK");
-//
-//  // Attach a function to trigger when something is received.
-//  Wire.onReceive(receiveDataEvent);
+  pinMode(TEMP_PIN, INPUT);
 }
 
-//set up and connect GSM
-//put this function to setup()
-void setupGSM() {
-  while (gsmConnected == false) {
-    if (gsmAccess.begin(SIM_PINNUMBER) == GSM_READY) {
-      gsmConnected = true;
-    } else {
-      Serial.println("Connecting GSM");
-      delay(1000);
+//setup MQ2 sensor and component
+void setupMQ2()
+{
+  // MQ2 warming up
+  delay(20000);
+}
+
+void setupSIM800L() {
+  smsSerial.begin(19200);
+  smsSerial.println("AT");
+}
+
+void loop()
+{
+  sendSensorData();
+  delay(5000);
+}
+
+void sendSensorData()
+{
+  smokeValue = analogRead(SMOKE_PIN);
+  gasValue = digitalRead(GAS_PIN);
+  ther_resistor = analogRead(TEMP_PIN);
+  tempValue = convertTempC(ther_resistor);
+  if (smokeValue > smokeThreshold || isTesting)
+  { //|| gasValue == HIGH) {
+    isWarning = true;
+    if (isTesting) {
+      smokeValue = smokeThreshold;
+    }
+    // sendSMS();
+    for (byte w = 0; w < 5; w++)
+    {
+      // led & buzzer warning
+      digitalWrite(LED_WARN_PIN, HIGH);
+      tone(BUZZER_PIN, 1000, 700);
+      delay(700);
+      digitalWrite(LED_WARN_PIN, LOW);
+      delay(300);
+    }
+    if (isTesting) {
+      isTesting = false;
     }
   }
-  Serial.println("GSM initialized");
-}
-
-//send Sms Warning to remoteNumber
-//return true if completely send
-//else return false and warning to Server
-boolean sendSmsWarning() {
-  if (notConnected == false) {
-    //FIX MEsms.beginSMS(&warningNumber);
-    //write message's content
-    sms.print(txtDefaultMsg);
-    sms.print(txtMsg);
-    sms.endSMS();
-    return true;
-    Serial.println("GSM: SEND SMS COMPLETELY");
+  else
+  {
+    isWarning = false;
+  }
+  Serial.println(tempValue);
+  Serial.println(smokeValue);
+  if (gasValue == 0) {
+    //avoid zero value in communication
+    Serial.println(2);
   } else {
-    Serial.println("GSM: GSM is not connected");
-    return false;
+    //gas detected !!! gasValue == 1 == HIGH
+    Serial.println(gasValue);
+  }
+  
+  if (isWarning) {
+    Serial.println(1);
+  } else {
+    Serial.println(2);
   }
 }
 
-//FIXME:
-//put this function to loop()
-boolean receiveSmsEvent() {
-  if (sms.available()) {
-    char c;
-    Serial.println("Message received from: ");
-    sms.remoteNumber(receiveNumber, 20);
-    Serial.println(receiveNumber);
-
-    while (c = sms.read()) {
-      //FIXME: get message's content
-      Serial.print(c);
+void receiveData() {
+  String msgRecv = "";
+  char chRecv;
+  byte count = 0;
+  while (Serial.available() > 0)
+  {
+    chRecv = Serial.read();
+    if (chRecv == '=') {
+      count++;
+      // the end of message
+      if (count == 2) {
+        break;
+      }
+    } else {
+      if (count == 1) {
+        msgRecv.concat('=');
+      }
+      msgRecv.concat(chRecv);
+      
+      count = 0;
     }
-    Serial.println("\n End of messages");
+  }
 
-    //TODO: use message's content to setting this device
-    //setting
-    
-    //FIXME: checking if need to delete this message
-    sms.flush();
-    Serial.println("Message deleted");
+  if (msgRecv != "") {
+    String data = msgRecv.substring(4);
+    if (msgRecv.startsWith("103")) {
+      //setting warningNumber;
+      warningNumber = string2char(data);
+    } else if(msgRecv.startsWith("104")) {
+      //setting agencyNumber;
+      agencyNumber = string2char(data);
+    } else if(msgRecv.startsWith("105")) {
+      //data 1111 -> 2222 with 1==true and 2==false in the order (smoke, gas, sms, notification)
+      isTesting = true;
+      testingData = string2char(data);
+    } else if(msgRecv.startsWith("106")) {
+      isTesting = false;
+    }
   }
 }
 
-//
-void receiveDataEvent(int manyBytes) {
-  if (manyBytes) {
-    //read temp
-    //tempValue = "15.5";
-    //read gas
-    int gasValue = digitalRead(GAS_PIN);
-    //read smoke
-    int smokeValue = analogRead(SMOKE_PIN);
-//    Wire.write("15.5");
-//    Wire.write("200");
-//    Wire.write("200");
-    Serial.println(tempValue + " " + gasValue + " " + smokeValue);
-    if (gasValue > gasThreshold || smokeValue > smokeThreshold) {
-      isWarning = true;
-      Serial.println("warning warning warning");
+void sendSMS() {
+  smsSerial.println("AT+CMGF=1"); // Configuring TEXT mode
+  // smsSerial.print("AT+CMGS=\"+ZZxxxxxxxxxx\"");//change ZZ with country code and xxxxxxxxxxx with phone number to sms
+  smsSerial.print("AT+CMGS=\"+33");
+  smsSerial.print(warningNumber);
+  smsSerial.print("\"");
+  smsSerial.print(txtMsg); //text content
+  smsSerial.write(26); //like CTRL + Z
+}
+
+char* string2char(String command){
+    if(command.length()!=0){
+        char *p = const_cast<char*>(command.c_str());
+        return p;
     }
-  }
 }
