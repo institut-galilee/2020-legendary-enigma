@@ -6,6 +6,7 @@
 #include <BluetoothSerial.h>
 
 #define AWS_IOT_PUBLISH_TOPIC "FireAlarm/sensor_data"
+#define AWS_IOT_PUBLISH_WARNING_TOPIC "FireAlarm/warning"
 #define AWS_IOT_SUBSCRIBE_TOPIC "FireAlarm/settings/FA_LE_0001"
 char* WIFI_SSID = "freebox_VITRY";          //freebox_VITRY
 char* WIFI_PASSWORD = "DD2BF3B4EE"; //DD2BF3B4EE
@@ -46,34 +47,52 @@ void loop() {
   client.loop();
   delay(5000);
 }
-void checkBluetooth(){
-  
+void checkBluetooth() {
   if (listenBT)
   {
     String msgRecvBT = "";
     char chRecv;
+    byte count = 0;
     while (SerialBT.available() > 0)
     {
       Serial.println(F("reading Bluetooth data"));
       chRecv = SerialBT.read();
-      msgRecvBT.concat(chRecv);
+      if (chRecv == '=') {
+        count++;
+        // the end of message
+        if (count == 2) {
+          break;
+        }
+      } else {
+        msgRecvBT.concat(chRecv);
+        count = 0;
+      }
     }
+    //
     if (msgRecvBT != "") {
       String data = msgRecvBT.substring(4);
-      if (msgRecvBT.startsWith("101")) {
-        data.toCharArray(WIFI_SSID, data.length());
+      if (msgRecvBT.startsWith("100")) {
+        //start communication
+        //TODO: send setting data to mobile;
+
+      } else if (msgRecvBT.startsWith("101")) {
+        WIFI_SSID = string2char(data);
         wifiCntd = false;
         wifiBegan = false;
-      }
-      if (msgRecvBT.startsWith("102")) {
-        data.toCharArray(WIFI_PASSWORD, data.length());
+
+        //second time to read wifi's password
+        checkBluetooth();
+      } else if (msgRecvBT.startsWith("102")) {
+        WIFI_PASSWORD = string2char(data);
         wifiCntd = false;
         wifiBegan = false;
-      }
-      if (msgRecvBT.startsWith("103")) {
-        //TODO:
-      }
-      else {
+      } else if (msgRecvBT.startsWith("103") || msgRecvBT.startsWith("104") {
+        //Setting
+        Serial2.print(msgRecvBT);
+      } else if (msgRecvBT.startsWith("105") {
+        //Testing
+        Serial2.print(msgRecvBT);
+      } else {
         Serial.println(F("strange connection BT"));
         Serial.println(msgRecvBT.c_str());
       }
@@ -112,14 +131,14 @@ void checkAWS() {
       delay(2000);
     }
     if (!client.connected()) {
-       Serial.println(F("AWS time out"));
-       awsCntd = false;
-       return; 
+      Serial.println(F("AWS time out"));
+      awsCntd = false;
+      return;
     }
     awsCntd = true;
     client.subscribe(AWS_IOT_SUBSCRIBE_TOPIC);
     Serial.println(F("aws cntd"));
-    
+
   }
 }
 
@@ -136,6 +155,13 @@ void publishSensorData() {
     unsigned int smoke = Serial2.parseInt();
     if (smoke <= 0) {
       smoke = Serial2.parseInt();
+    }
+    unsigned int isWarning = Serial2.parseInt();
+    if (isWarning <= 0) {
+      isWarning = Serial2.parseInt();
+      if (isWarning == 1) {
+        publishWarningMessage();  
+      }
     }
     Serial.println(temp);
     Serial.println(gas);
@@ -154,9 +180,26 @@ void publishMessage(unsigned int temp, unsigned int gas, unsigned int smoke) {
   serializeJson(doc, jsonBuffer);
   client.publish(AWS_IOT_PUBLISH_TOPIC, jsonBuffer);
 }
+
+void publishWarningMessage() {
+  StaticJsonDocument<200> doc;
+  doc["device_id"] = DEVICE_ID;
+  doc["is_warning"] = "true";
+  char jsonBuffer[512];
+  serializeJson(doc, jsonBuffer);
+  client.publish(AWS_IOT_PUBLISH_WARNING_TOPIC, jsonBuffer);
+}
 void messageHandler(String &topic, String &payload) {
   // Serial.println("incoming: " + topic + " - " + payload);
   //  StaticJsonDocument<200> doc;
   //  deserializeJson(doc, payload);
   //  const char* message = doc["message"];
+}
+
+
+char* string2char(String command){
+    if(command.length()!=0){
+        char *p = const_cast<char*>(command.c_str());
+        return p;
+    }
 }
