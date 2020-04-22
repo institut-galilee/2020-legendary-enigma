@@ -1,26 +1,30 @@
 # IoT Project 2020 - Legendary Enigma
 
 ## 1. Description de projet
-Notre projet est de développer une cloche d'alarme incendie. La cloche alerte l'utilisateur sur la presence de gaz, de fumée dans la maison.
-Après, nous avons développer les fonctionalités d'un maison intelligent.
+Notre projet est de développer une cloche d'alarme incendie. L'alarme incendie a un LED, un Buzzer et les deux méthodes: pousser la
+notification mobile et envoyer le SMS pour annoncer.
+
+Nous utilison les services de AWS comme : AWS EC2, AWS IoT Core, AWS SNS, AWS DynamoDb
 
 ## 2. Function
 - Détecter le gaz et la fumée
 
 - Mesurer la température, l'humidité, la pression
 
-- Envoyer un avertissement au client lorsque le gaz est détecté ou la fumée est détectée.
-	+ Si Wifi n'est pas disponible, device envoiera un SMS au client
+- Quand le gaz est détecté ou la fumée est détectée:
+	+ Envoyer un avertissement au client par la notification mobile.
+	+ Si Wifi n'est pas disponible, device envoiera un SMS au client.
 	
 - Le client peut voir les données (température, humidité, pression) sur l'application mobile en temps réel et dans un moi, dans une semaine.
 
 - Le client peut configurer des paramètre de device (wifi & password, temps de collecter, connection de bluetooth, ...)
 
-- Le client peut peut ouvrir la porte de maison et de garage
-
 - un Server simple est de stocker les données, d'envoyer les informations au client et de calculer les statistiques.
 
-- Frontend est l'application mobile pour l'utilisateur
+- Frontend est l'application mobile qui inclut
+	+ configurer les parametres - Wifi, numero de telephone
+	+ test la fonctionalite d'anoncer
+	+ regarder les données en temps réel
 
 Usecase Diagram:
 ![Usecase Diagram](image/Fire Alarm _ Usecase Diagram.png)
@@ -52,7 +56,7 @@ Usecase Diagram:
 
 
 ## 5. Schema
-![Schematic](image/schema.png)
+![Schematic](image/Fire Alarm_bb.jpg)
 
 ## 6. References:
 
