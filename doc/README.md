@@ -23,7 +23,7 @@ Après, nous avons développer les fonctionalités d'un maison intelligent.
 - Frontend est l'application mobile pour l'utilisateur
 
 Usecase Diagram:
-![Usecase Diagram](image/UC_diagram.png)
+![Usecase Diagram](image/Fire Alarm _ Usecase Diagram.png)
 
 ## 3.Description des fonctionalités:
 
@@ -39,17 +39,16 @@ Usecase Diagram:
 - BME280 sensor		: Humidity, temperature
 ![BME280](image/BME280.png)
 
-- MFRC522 			: RFID Reader
-![MFRC522 _ RFID](image/MFRC522_RFID.png)
-
 - SIM800L 			: GSM Module
 ![800L GSM Module](image/800L_GSM_Module.png)
 
-- Expansion Board	: Extension
+- Expansion Board	: Prototype Shield v.5
 
 - Led, Buzzer 		: Warning
 
-- Wire, Resistance,...
+- Potentiometer		: 
+
+- Wire, Resistor,...
 
 
 ## 5. Schema
