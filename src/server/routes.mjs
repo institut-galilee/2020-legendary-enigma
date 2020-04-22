@@ -15,6 +15,10 @@ function routes(app) {
   app.post('/sensor_data', (request, response) => {
     fa_service.getSensorData(request, response);
   });
+
+  app.post('/send_sms', (request, response) => {
+    fa_service.sendSMSWarning(request, response);
+  });
 }
 
 export default routes;

@@ -59,7 +59,7 @@ function login(req, res) {
   });
 }
 
-function getSensorData(req, res, next) {
+function getSensorData(req, res) {
   let device_id = req.body.device_id;
   let from = req.body.from;
   let to = req.body.to;
@@ -97,12 +97,36 @@ function getSensorData(req, res, next) {
   });
 }
 
+function sendSMSWarning(req, res) {
+    var params = {
+        Message: "FireAlarm's WARNING !!! Smoke is detected in your house now !!!", //req.query.message,
+        PhoneNumber: '+' + req.body.number,
+        MessageAttributes: {
+            'AWS.SNS.SMS.SenderID': {
+                'DataType': 'String',
+                'StringValue': "GasWarning"
+            }
+        }
+    };
+
+    var publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
+
+    publishTextPromise.then(
+        function (data) {
+            res.end(JSON.stringify({ MessageID: data.MessageId }));
+        }).catch(
+            function (err) {
+                res.end(JSON.stringify({ Error: err }));
+            });
+
+}
+
 const Service = {
-  login, getSensorData
+  login, getSensorData, sendSMSWarning
 }
 
 export default Service;
-export { login, getSensorData }
+export { login, getSensorData, sendSMSWarning }
 
 
 
