@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_01"
+    tools:context="com.legendaryenigma.firealarm.TestingActivity" >
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        app:srcCompat="@drawable/alarm"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/tv_testing"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:text="TEST DEVICE WARNING"
+        android:textColor="#FFFF00"
+        android:textSize="10pt"
+        />
+
+    <CheckBox
+        android:id="@+id/cb_test_smoke"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_below="@+id/tv_testing"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="30dp"
+        android:text="Test Smoke Detected"
+        android:textColor="#ffffff"
+        android:textSize="10pt"
+        app:buttonTint="#ffffff"
+        />
+
+    <CheckBox
+        android:id="@+id/cb_test_gas"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_below="@+id/cb_test_smoke"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="30dp"
+        android:text="Test Gas Detected"
+        android:textColor="#ffffff"
+        android:textSize="10pt"
+        app:buttonTint="#ffffff"
+        />
+
+    <CheckBox
+        android:id="@+id/cb_test_sms"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_below="@+id/cb_test_gas"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="30dp"
+        android:text="Test Sending SMS"
+        android:textColor="#ffffff"
+        android:textSize="10pt"
+        app:buttonTint="#ffffff"
+        />
+
+    <CheckBox
+        android:id="@+id/cb_test_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_below="@+id/cb_test_sms"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="30dp"
+        android:text="Test Send Notification"
+        android:textColor="#ffffff"
+        android:textSize="10pt"
+        app:buttonTint="#ffffff"
+        />
+
+    <Button
+        android:id="@+id/btn_test"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_below="@+id/cb_test_notification"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:text="Test"
+        android:textColor="#FF2200"
+        />
+
+
+</RelativeLayout>

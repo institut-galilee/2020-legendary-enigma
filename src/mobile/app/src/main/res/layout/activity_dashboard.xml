@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_01"
+    tools:context="com.legendaryenigma.firealarm.DashboardActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        app:srcCompat="@drawable/alarm"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:id="@+id/iv_visual"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        app:srcCompat="@drawable/visualization"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/imageView"
+        />
+
+    <ImageView
+        android:id="@+id/iv_testing"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        app:srcCompat="@drawable/testing_icon"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/imageView"
+        android:layout_toRightOf="@+id/iv_visual"
+        />
+    <ImageView
+        android:id="@+id/iv_setting"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        app:srcCompat="@drawable/setting_icon"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/iv_visual"
+        />
+
+    <ImageView
+        android:id="@+id/iv_logout"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        app:srcCompat="@drawable/logout_icon"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/iv_visual"
+        android:layout_toRightOf="@+id/iv_setting"
+        />
+
+
+</RelativeLayout>
