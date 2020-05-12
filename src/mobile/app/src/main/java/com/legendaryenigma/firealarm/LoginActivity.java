@@ -24,7 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView tvRegister;
     Button btnLogin;
 
-    final String url_Login = "http://174.129.57.242/login";
+    final String url_Login = "http://172.31.95.97/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,45 +57,45 @@ public class LoginActivity extends AppCompatActivity {
             String deviceId = strings[0];
             String password = strings[1];
 
-            Intent it = new Intent(LoginActivity.this,
-                    DashboardActivity.class);
-            startActivity(it);
-            finish();
-            return null;
+            // Intent it = new Intent(LoginActivity.this,
+            //         DashboardActivity.class);
+            // startActivity(it);
+            // finish();
+            // return null;
 
-//            OkHttpClient okHttpClient = new OkHttpClient();
-//            RequestBody formBody = new FormBody.Builder()
-//                    .add("device_id", deviceId)
-//                    .add("password", password)
-//                    .build();
-//
-//            Request request = new Request.Builder()
-//                    .url(url_Login)
-//                    .post(formBody)
-//                    .build();
-//
-//            Response response = null;
-//            try{
-//                response = okHttpClient.newCall(request).execute();
-//                if(response.isSuccessful()){
-//                    String result = response.body().string();
-//                    String expected = "{\"message\":"+"\""+ deviceId +"\"}";
-//                    Log.d("debug_tag", result);
-//                    Log.d("debug_tag", expected);
-//                    if(result.equalsIgnoreCase(expected)){
-//                        Intent i = new Intent(LoginActivity.this,
-//                                DashboardActivity.class);
-//                        startActivity(i);
-//                        finish();
-//                    }else{
-//                       showToast("Device's Id or Password mismatched!");
-//                    }
-//                }
-//            }catch (Exception e){
-//                e.printStackTrace();
-//                showToast(e.getMessage());
-//            }
-//            return null;
+           OkHttpClient okHttpClient = new OkHttpClient();
+           RequestBody formBody = new FormBody.Builder()
+                   .add("device_id", deviceId)
+                   .add("password", password)
+                   .build();
+
+           Request request = new Request.Builder()
+                   .url(url_Login)
+                   .post(formBody)
+                   .build();
+
+           Response response = null;
+           try{
+               response = okHttpClient.newCall(request).execute();
+               if(response.isSuccessful()){
+                   String result = response.body().string();
+                   String expected = "{\"message\":"+"\""+ deviceId +"\"}";
+                   Log.d("debug_tag", result);
+                   Log.d("debug_tag", expected);
+                   if(result.equalsIgnoreCase(expected)){
+                       Intent i = new Intent(LoginActivity.this,
+                               DashboardActivity.class);
+                       startActivity(i);
+                       finish();
+                   }else{
+                      showToast("Device's Id or Password mismatched!");
+                   }
+               }
+           }catch (Exception e){
+               e.printStackTrace();
+               showToast(e.getMessage());
+           }
+           return null;
         }
     }
 

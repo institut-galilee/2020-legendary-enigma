@@ -4,24 +4,42 @@
 #include <MQTTClient.h>
 #include <ArduinoJson.h>
 #include <BluetoothSerial.h>
+#include <EEPROM.h>
 
 #define AWS_IOT_PUBLISH_TOPIC "FireAlarm/sensor_data"
 #define AWS_IOT_PUBLISH_WARNING_TOPIC "FireAlarm/warning"
 #define AWS_IOT_SUBSCRIBE_TOPIC "FireAlarm/settings/FA_LE_0001"
+#define EEPROM_SIZE 256;
 char* WIFI_SSID = "freebox_VITRY";          //freebox_VITRY
 char* WIFI_PASSWORD = "DD2BF3B4EE"; //DD2BF3B4EE
 WiFiClientSecure net = WiFiClientSecure();
 MQTTClient client = MQTTClient(256);
 BluetoothSerial SerialBT;
 char* DEVICE_ID = "FA_LE_0001";
+char* warningNumber;
 
 bool listenBT = true; //true = SerialBT.begin("FireAlarm_LE")
 bool wifiCntd = false;
 bool wifiBegan = false;
 bool awsCntd = false;
 
+struct SettingStruct {
+  char* deviceId;
+  char* warningNumber;
+  char* wifiName;
+  char* wifiPass;
+};
+
+SettingStruct settingData = {
+  DEVICE_ID,
+  warningNumber,
+  WIFI_SSID,
+  WIFI_PASSWORD
+};
+
 void setup() {
   Serial.begin(9600);
+  EEPROM.begin(EEPROM_SIZE);
   checkWiFi();
   checkAWS();
   Serial2.begin(19200, SERIAL_8N1, 16, 17);
@@ -74,7 +92,7 @@ void checkBluetooth() {
       if (msgRecvBT.startsWith("100")) {
         //start communication
         //TODO: send setting data to mobile;
-
+        
       } else if (msgRecvBT.startsWith("101")) {
         WIFI_SSID = string2char(data);
         wifiCntd = false;
@@ -87,6 +105,7 @@ void checkBluetooth() {
         wifiCntd = false;
         wifiBegan = false;
       } else if (msgRecvBT.startsWith("103") || msgRecvBT.startsWith("104") {
+        warningNumber = string2char(data);
         //Setting
         Serial2.print(msgRecvBT);
       } else if (msgRecvBT.startsWith("105") {
@@ -97,6 +116,15 @@ void checkBluetooth() {
         Serial.println(msgRecvBT.c_str());
       }
     }
+
+    //save data to EEPROM
+    settingData = {
+      DEVICE_ID,
+      warningNumber,
+      WIFI_SSID,
+      WIFI_PASSWORD
+    };
+    EEPROM.put(0, settingData);
   }
 }
 void checkWiFi() {
@@ -160,7 +188,7 @@ void publishSensorData() {
     if (isWarning <= 0) {
       isWarning = Serial2.parseInt();
       if (isWarning == 1) {
-        publishWarningMessage();  
+        postWarningMessage(gas);  
       }
     }
     Serial.println(temp);
@@ -181,14 +209,60 @@ void publishMessage(unsigned int temp, unsigned int gas, unsigned int smoke) {
   client.publish(AWS_IOT_PUBLISH_TOPIC, jsonBuffer);
 }
 
-void publishWarningMessage() {
-  StaticJsonDocument<200> doc;
-  doc["device_id"] = DEVICE_ID;
-  doc["is_warning"] = "true";
-  char jsonBuffer[512];
-  serializeJson(doc, jsonBuffer);
-  client.publish(AWS_IOT_PUBLISH_WARNING_TOPIC, jsonBuffer);
+//http
+void postWarningMessage(int warningValue) {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin("http://172.31.95.97/send_sms");
+    http.addHeader("Content-Type", "application/json");
+    DynamicJsonDocument doc(200);
+    //device's id, warning value and warning number to send sms.
+    doc["deviceId"] = DEVICE_ID;
+    doc["warningValue"] = warningValue;
+    doc["warningNumber"] = warningNumber;
+    
+    String postBody;
+    serializeJson(doc, postBody);
+
+    int httpCode = http.POST(postBody);
+    if (httpCode == 200) {
+      //TODO:
+      //send SMS successfully
+    } else if (httpCode == 400) {
+      // error in postBody
+    } else {
+      // error in postRequest
+    }
+
+
+  }
 }
+
+/* 
+structure of EEPROM
+[0]         length of id, normally 10 (d)
+[1 -> 11]    device's id
+[12]        length of warning number (t)
+[13 -> 13+t] warning number, ex (33123456789)
+[14+t]      length of wifi name (n)
+[15+t -> 15+t+n] wifi name
+[16+t+n]    length of wifi pass (p)
+[17+t+n -> 17+t+n+p] wifi pass    
+*/
+
+
+
+void saveSetting(char* deviceId, char* warningNumber, char* wifiName, char* wifiPass) {
+  int d = strlen(deviceId);
+  
+  int t = strlen(warningNumber);
+  int n = strlen(wifiName);
+  int p = strlen(wifiPass);
+
+
+}
+
+
 void messageHandler(String &topic, String &payload) {
   // Serial.println("incoming: " + topic + " - " + payload);
   //  StaticJsonDocument<200> doc;

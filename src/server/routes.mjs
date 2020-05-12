@@ -4,9 +4,8 @@ import fa_service from "./service.mjs"
 function routes(app) {
   /* TODO: API
     Login
-    Change setting - Bluetooth ?
-    Test Alarm - Bluetooth ?
     Graph
+    Send SMS
   */
   app.post('/login', (request, response) => {
     fa_service.login(request, response);
@@ -18,6 +17,11 @@ function routes(app) {
 
   app.post('/send_sms', (request, response) => {
     fa_service.sendSMSWarning(request, response);
+  });
+
+  //TODO: later
+  app.post('/save_setting', (request, response) => {
+    fa_service.saveDeviceSetting(request, response);
   });
 }
 

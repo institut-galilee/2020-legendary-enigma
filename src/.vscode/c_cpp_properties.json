@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:\\Users\\DELL\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
+                "C:\\Users\\DELL\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\**",
+                "C:\\Users\\DELL\\AppData\\Local\\Arduino15\\packages\\esp32\\tools\\**",
+                "C:\\Users\\DELL\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\1.0.4\\**",
+                "D:\\Soft\\Arduino\\tools\\**",
+                "D:\\Soft\\Arduino\\hardware\\arduino\\avr\\**",
+                "C:\\Users\\DELL\\Documents\\Arduino\\libraries",
+                "D:\\Soft\\Arduino\\libraries\\GSM\\src"
+            ],
+            "forcedInclude": [
+                "D:\\Soft\\Arduino\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"
+            ],
+            "intelliSenseMode": "msvc-x64",
+            "compilerPath": "C:\\MinGW\\bin\\gcc.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

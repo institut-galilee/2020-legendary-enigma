@@ -11,7 +11,7 @@ import fs from 'fs';
 AWS.config.update({
   region: "us-east-1"
 });
-let credentials = new AWS.SharedIniFileCredentials({profile: 'default'});
+let credentials = new AWS.SharedIniFileCredentials({ profile: 'default' });
 
 AWS.config.credentials = credentials;
 
@@ -45,13 +45,13 @@ function login(req, res) {
       res.json({
         message: err.message
       });
-    } else if(data.Count == 1) {
+    } else if (data.Count == 1) {
       console.log("Login successfully: " + device_id);
       res.statusCode = 200;
       res.json({
         message: device_id
       });
-    } else if(data.Count == 0) {
+    } else if (data.Count == 0) {
       res.json({
         message: "Device's id or password is incorrect"
       });
@@ -69,14 +69,14 @@ function getSensorData(req, res) {
     ExpressionAttributeValues: {
       ':id': device_id,
       ':t1': from,
-      ':t2': to 
+      ':t2': to
     },
     ExpressionAttributeNames: {
       '#id': 'device_id',
       '#ts': 'timestamp'
     }
   }
-  
+
   docClient.query(params, function (err, data) {
     if (err) {
       console.error("Unable to read item. Error JSON", JSON.stringify(data, null, 2));
@@ -98,35 +98,46 @@ function getSensorData(req, res) {
 }
 
 function sendSMSWarning(req, res) {
-    var params = {
-        Message: "FireAlarm's WARNING !!! Smoke is detected in your house now !!!", //req.query.message,
-        PhoneNumber: '+' + req.body.number,
-        MessageAttributes: {
-            'AWS.SNS.SMS.SenderID': {
-                'DataType': 'String',
-                'StringValue': "GasWarning"
-            }
-        }
-    };
+  console.log(`WARNING!!! ${req.body.deviceId} with value ${req.body.warningValue} to number ${req.body.warningNumber} !`);
+  
+  var params = {
+    Message: "FireAlarm's WARNING !!! Smoke is detected in your house now !!!", //req.query.message,
+    PhoneNumber: '+' + req.body.warningNumber,
+    MessageAttributes: {
+      'AWS.SNS.SMS.SenderID': {
+        'DataType': 'String',
+        'StringValue': "GasWarning"
+      }
+    }
+  };
 
-    var publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
+  var publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
 
-    publishTextPromise.then(
-        function (data) {
-            res.end(JSON.stringify({ MessageID: data.MessageId }));
-        }).catch(
-            function (err) {
-                res.end(JSON.stringify({ Error: err }));
-            });
+  publishTextPromise.then(
+    function (data) {
+      res.end(JSON.stringify({ MessageID: data.MessageId }));
+      console.log(`WARNING_SUCCESSFUL!!! ${req.body.deviceId} with value ${req.body.warningValue} to number ${req.body.warningNumber} !`);
+    }
+  ).catch(
+    function (err) {
+        res.status(400).end(JSON.stringify({ Error: err }));
+        console.log(`WARNING_FAILED!!! ${req.body.deviceId} with value ${req.body.warningValue} to number ${req.body.warningNumber} !
+        with failed error ${err.message}`);
+    }
+  );
+
+}
+
+function saveDeviceSetting(req, res) {
 
 }
 
 const Service = {
-  login, getSensorData, sendSMSWarning
+  login, getSensorData, sendSMSWarning, saveDeviceSetting
 }
 
 export default Service;
-export { login, getSensorData, sendSMSWarning }
+export { login, getSensorData, sendSMSWarning, saveDeviceSetting }
 
 
 
