@@ -43,7 +43,7 @@ int convertTempC(float valuePinA2)
   valuePinA2 /= BCOEFFICIENT;
   valuePinA2 += 1.0 / (TEMPERATURENOMINAL + 273.15);
   valuePinA2 = 1.0 / valuePinA2;
-  valuePinA2 -= 273.15;
+  valuePinA2 -= 240.15;
   return valuePinA2;
 }
 
@@ -69,7 +69,7 @@ void setupPin()
 void setupMQ2()
 {
   // MQ2 warming up
-  delay(20000);
+  delay(2000);
 }
 
 void setupSIM800L() {
@@ -80,7 +80,7 @@ void setupSIM800L() {
 void loop()
 {
   sendSensorData();
-  delay(5000);
+  delay(10000);
 }
 
 void sendSensorData()
@@ -95,7 +95,8 @@ void sendSensorData()
     if (isTesting) {
       smokeValue = smokeThreshold;
     }
-    // sendSMS();
+    
+    sendSMS();
     for (byte w = 0; w < 5; w++)
     {
       // led & buzzer warning
@@ -113,6 +114,7 @@ void sendSensorData()
   {
     isWarning = false;
   }
+
   Serial.println(tempValue);
   Serial.println(smokeValue);
   if (gasValue == 0) {
@@ -126,6 +128,7 @@ void sendSensorData()
   if (isWarning) {
     Serial.println(1);
   } else {
+    //replace 0 by 2;
     Serial.println(2);
   }
 }

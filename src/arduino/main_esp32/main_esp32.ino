@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <MQTTClient.h>
+#include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include <BluetoothSerial.h>
 #include <EEPROM.h>
@@ -9,9 +10,10 @@
 #define AWS_IOT_PUBLISH_TOPIC "FireAlarm/sensor_data"
 #define AWS_IOT_PUBLISH_WARNING_TOPIC "FireAlarm/warning"
 #define AWS_IOT_SUBSCRIBE_TOPIC "FireAlarm/settings/FA_LE_0001"
-#define EEPROM_SIZE 256;
+#define EEPROM_SIZE 256
 char* WIFI_SSID = "freebox_VITRY";          //freebox_VITRY
 char* WIFI_PASSWORD = "DD2BF3B4EE"; //DD2BF3B4EE
+HTTPClient http;
 WiFiClientSecure net = WiFiClientSecure();
 MQTTClient client = MQTTClient(256);
 BluetoothSerial SerialBT;
@@ -22,6 +24,7 @@ bool listenBT = true; //true = SerialBT.begin("FireAlarm_LE")
 bool wifiCntd = false;
 bool wifiBegan = false;
 bool awsCntd = false;
+bool updatedSetting = false;
 
 struct SettingStruct {
   char* deviceId;
@@ -38,13 +41,14 @@ SettingStruct settingData = {
 };
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(19200);
   EEPROM.begin(EEPROM_SIZE);
   checkWiFi();
   checkAWS();
   Serial2.begin(19200, SERIAL_8N1, 16, 17);
   SerialBT.begin("FireAlarm_LE");
   checkBluetooth();
+  updateSetting();
   delay(5000);
 }
 byte k = 0;
@@ -63,7 +67,7 @@ void loop() {
   Serial.println(F("get sensor data to publish"));
   publishSensorData();
   client.loop();
-  delay(5000);
+  delay(10000);
 }
 void checkBluetooth() {
   if (listenBT)
@@ -91,32 +95,54 @@ void checkBluetooth() {
       String data = msgRecvBT.substring(4);
       if (msgRecvBT.startsWith("100")) {
         //start communication
-        //TODO: send setting data to mobile;
-        
+        //send setting data to mobile;
+        SerialBT.println(WIFI_SSID);
+        SerialBT.println(WIFI_PASSWORD);
+        SerialBT.println(warningNumber);
       } else if (msgRecvBT.startsWith("101")) {
         WIFI_SSID = string2char(data);
+        Serial.println("new wifi ssid");
+        Serial.println(WIFI_SSID);
         wifiCntd = false;
         wifiBegan = false;
-
+        updatedSetting = true;
         //second time to read wifi's password
         checkBluetooth();
       } else if (msgRecvBT.startsWith("102")) {
         WIFI_PASSWORD = string2char(data);
+        Serial.println("new wifi pass");
+        Serial.println(WIFI_PASSWORD);
         wifiCntd = false;
         wifiBegan = false;
-      } else if (msgRecvBT.startsWith("103") || msgRecvBT.startsWith("104") {
+        updatedSetting = true;
+      } else if (msgRecvBT.startsWith("103") || msgRecvBT.startsWith("104")) {
         warningNumber = string2char(data);
         //Setting
+        updatedSetting = true;
         Serial2.print(msgRecvBT);
-      } else if (msgRecvBT.startsWith("105") {
+      } else if (msgRecvBT.startsWith("105")) {
         //Testing
+        char* testingData = string2char(data);
+        postWarningMessage(400);
         Serial2.print(msgRecvBT);
       } else {
         Serial.println(F("strange connection BT"));
         Serial.println(msgRecvBT.c_str());
       }
     }
+  }
+}
 
+void updateSetting() {
+  if (updatedSetting) {
+     /* 
+      *  struct SettingStruct {
+        char* deviceId;
+        char* warningNumber;
+        char* wifiName;
+        char* wifiPass;
+      };
+     */
     //save data to EEPROM
     settingData = {
       DEVICE_ID,
@@ -125,6 +151,7 @@ void checkBluetooth() {
       WIFI_PASSWORD
     };
     EEPROM.put(0, settingData);
+    updatedSetting = false;
   }
 }
 void checkWiFi() {
@@ -191,9 +218,11 @@ void publishSensorData() {
         postWarningMessage(gas);  
       }
     }
+    Serial.println("---------------");
     Serial.println(temp);
     Serial.println(gas);
     Serial.println(smoke);
+    Serial.println("---------------");
     publishMessage(temp, gas, smoke);
     return;
   }
@@ -212,8 +241,8 @@ void publishMessage(unsigned int temp, unsigned int gas, unsigned int smoke) {
 //http
 void postWarningMessage(int warningValue) {
   if (WiFi.status() == WL_CONNECTED) {
-    HTTPClient http;
-    http.begin("http://172.31.95.97/send_sms");
+
+    http.begin("http://54.172.128.55/send_sms");
     http.addHeader("Content-Type", "application/json");
     DynamicJsonDocument doc(200);
     //device's id, warning value and warning number to send sms.
