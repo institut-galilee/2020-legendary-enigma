@@ -10,4 +10,4 @@ Realisé par:  Minh Hao LE
 
 [Link to Source code!](https://github.com/institut-galilee/2020-legendary-enigma/tree/master/src)
 
-[Link to Youtube video! (TO BE UPDATE)](https://youtube.com)
+[Link to Youtube video! (Updated)](https://drive.google.com/file/d/1C-_1QfvEqGrLFiRWq7FOSt_bfAP-lbqs/view?usp=sharing)
