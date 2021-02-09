@@ -1,6 +1,6 @@
 # project Internet of Things 2020 - Université Sorbonne Paris Nord
 
-Project:      Alarme d'incendie
+Project:      Alarme incendie
 
 Group:        Legendary Enigma
 
